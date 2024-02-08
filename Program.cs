@@ -1,11 +1,20 @@
 using DevDiaries.Web.Data;
+using DevDiaries.Web.Data.Contracts;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddDbContext<BlogsDBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("BlogsDBConnectionString")));
+builder.Services.AddControllers();
+builder.Services.AddDbContext<BlogsDBContext>(options =>
+options.UseSqlServer(builder.Configuration.GetConnectionString("BlogsDBConnectionString")));
+
+//when we use IBlogRepository in any constructor then its implementation would be BlogRepository.
+builder.Services.AddScoped<IBlogRepository,BlogRepository>();
+builder.Services.AddScoped<ITagRepository,TagRepository>();
+builder.Services.AddScoped<IImageRepository,ImageRepository>();
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
@@ -25,5 +34,5 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapRazorPages();
-
+app.MapControllers();
 app.Run();

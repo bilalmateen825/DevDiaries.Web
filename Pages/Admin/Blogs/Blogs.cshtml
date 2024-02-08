@@ -1,0 +1,55 @@
+﻿@page
+@model DevDiaries.Web.Pages.Admin.Blogs.BlogsModel
+@{
+}
+
+<partial name="_Notification" />
+
+<div class="container">
+    <div class="table-title">
+        <div class="row">
+            <div class="col-sm-10">
+                <h2> <b>Blogs</b></h2>
+            </div>
+            <div class="col-sm-2">
+                <a asp-page="Add" class="btn btn-info add-new">
+                    <i class="fa fa-plus"></i> Add New
+                </a>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Blogs == null)
+    {
+        <h2>No Content</h2>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Heading</th>
+                    @*<th scope="col">Content</th>*@
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var blog in Model.Blogs)
+                {
+                    <tr>
+                        <th scope="row">@blog.Id</th>
+                        <td>@blog.Heading</td>
+                        @*<td>@blog.Content</td>*@
+                        <td><a href="/Admin/Blogs/Edit/@blog.Id">View</a></td>
+
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+
+    }
+
+</div>

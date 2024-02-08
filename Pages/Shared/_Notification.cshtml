@@ -1,0 +1,39 @@
+﻿@using DevDiaries.Web.Classes;
+
+@{
+    Notification notification = ViewData[Constants.Notification] as Notification;
+
+    if (notification != null)
+    {
+        string stAlertStatusClass = "";
+
+        switch (notification.Type)
+        {
+            case Classes.Enums.ENNotificationType.Success:
+                {
+                    stAlertStatusClass = "alert-success";
+                    break;
+                }
+            case Classes.Enums.ENNotificationType.Info:
+                {
+                    stAlertStatusClass = "alert-info";
+                    break;
+                }
+            case Classes.Enums.ENNotificationType.Error:
+                {
+                    stAlertStatusClass = "alert-danger";
+                    break;
+                }
+            default:
+                break;
+
+        }
+
+        <div class="container mb-5">
+            <div class="alert @stAlertStatusClass alert-dismissible fade show" role="alert">
+                @Html.Raw(@notification.Message)
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" />
+            </div>
+        </div>
+    }
+}

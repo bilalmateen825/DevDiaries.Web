@@ -1,18 +1,23 @@
-﻿@page
-@model DevDiaries.Web.Pages.Admin.Blogs.AddModel
+﻿@page "{id:Guid}"
+@model DevDiaries.Web.Pages.Admin.Blogs.EditModel
 @{
-
 }
 
 <div class="bg-secondary bg-opacity-10 py-2 mb-5">
     <div class="container">
-        <h1>Add Post</h1>
+        <h1>Edit Post</h1>
     </div>
 </div>
 
 <div>
     <div class="container">
         <form action="" method="post" enctype="multipart/form-data">
+
+            <div class="mb-3">
+                <label for="Id" class="form-label">Id</label>
+                <input type="text" class="form-control" id="id" placeholder="Header" asp-for="@Model.BlogPost.Id" readonly>
+            </div>
+
             <div class="mb-3">
                 <label for="HeadingId" class="form-label">Heading</label>
                 <input type="text" class="form-control" id="HeadingId" placeholder="Header" asp-for="@Model.BlogPost.Heading">
@@ -30,28 +35,31 @@
                 <textarea class="form-control" id="ShortDescriptionId" rows="3" asp-for="@Model.BlogPost.ShortDescription"></textarea>
             </div>
             <div class="mb-3">
-                <label for="FeaturedImageURL" class="form-label">Image</label>
-                <input type="file" class="form-control" id="FeaturedImage" placeholder="Image" asp-for="@Model.FeaturedImage" />
-                @*<input type="text" class="form-control" id="FeaturedImageURL" placeholder="URL" asp-for="@Model.BlogPost.FeaturedImageURL" hidden />*@
+                @*<label for="FeaturedImageURL" class="form-label">URL</label>
+                <input type="text" class="form-control" id="FeaturedImageURL" placeholder="URL" asp-for="@Model.BlogPost.FeaturedImageURL" />*@
 
-                <div id="imageContainer" style="display:none;">
+                <div class="mb-3">
+                    <label for="FeaturedImageURL" class="form-label">Image</label>
+                    <input type="file" class="form-control" id="FeaturedImage" placeholder="Image" asp-for="@Model.FeaturedImage" />
 
-                    <img id="image" src="#" style="max-width: 200px; max-height: 200px;" />
-                    <br />
-                    <button type="button" id="removeImage" onclick="removeFeaturedImage()" style="width: 130px;">Remove</button>
+                    <input type="text" class="form-control" id="FeaturedImageURL" placeholder="Image" asp-for="@Model.BlogPost.FeaturedImageURL" hidden />
+                    @*<input type="text" class="form-control" id="FeaturedImageURL" placeholder="URL" asp-for="@Model.BlogPost.FeaturedImageURL" hidden />*@
+
+
+
+                    @if (Model.BlogPost != null && !string.IsNullOrEmpty(Model.BlogPost.FeaturedImageURL))
+                    {
+                        <div id="imageContainer" style="display:block;">
+
+                            <img id="image" src="@Model.BlogPost.FeaturedImageURL" style="max-width: 200px; max-height: 200px;" />
+                            <br />
+                            <button type="button" id="removeImage" onclick="removeFeaturedImage()" style="width: 130px;">Remove</button>
+
+                        </div>
+                    }
 
                 </div>
-
-                @*  @if (Model.BlogPost != null && !string.IsNullOrEmpty(Model.BlogPost.FeaturedImageURL))
-                {
-
-                }*@
-
             </div>
-            @*   <div class="mb-3">
-            <label for="FeaturedImageURL" class="form-label">URL</label>
-            <input type="text" class="form-control" id="FeaturedImageURL" placeholder="URL" asp-for="@Model.BlogPost.FeaturedImageURL" />
-            </div>*@
             <div class="mb-3">
                 <label for="URLHandleId" class="form-label">URL Handle</label>
                 <input type="text" class="form-control" id="URLHandleId" placeholder="URL Handle" asp-for="@Model.BlogPost.UrlHandle" />
@@ -64,25 +72,27 @@
                 <label for="AuthorId" class="form-label">Author</label>
                 <input type="text" class="form-control" id="AuthorId" placeholder="Author" asp-for="@Model.BlogPost.Author" />
             </div>
+
             <div class="mb-3">
                 <label for="Tags" class="form-label">Tags</label>
                 <input type="text" class="form-control" id="Tags" placeholder="Tags" asp-for="@Model.Tags" />
             </div>
+
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" value="" id="VisibleId" asp-for="@Model.BlogPost.Visible">
                 <label class="form-check-label" for="VisibleId">
                     Visible
                 </label>
             </div>
-            <div class="mb-3">
-                <button type="submit" class="btn btn-primary" value="Submit">Submit</button>
+            <div class="mb-3 d-flex justify-content-between">
+                <button type="submit" class="btn btn-primary" asp-page-handler="Edit" value="Submit">Edit</button>
+                <button type="submit" class="btn btn-danger" asp-page-handler="Delete" value="Delete">Delete</button>
             </div>
         </form>
     </div>
 </div>
 
 <script>
-
     var editor = new FroalaEditor('#ContentId',
         {
             imageUploadURL: '/api/Image/UploadAsync'
@@ -108,16 +118,21 @@
     }
 
     function removeFeaturedImage() {
+
+        console.log("Hey");
         var imageContainer = document.getElementById('imageContainer');
         var image = document.getElementById('image');
+        var imageFeaturedImageURL = document.getElementById('FeaturedImageURL');
+
+         debugger;
 
         if (imageContainer && image) {
             imageContainer.style.display = 'none';
             image.src = '#'; // Reset the image source
             imageToUpload.value = ''; // Clear the file input
+
+            debugger;
+            imageFeaturedImageURL.value = '';
         }
     }
 </script>
-
-
-

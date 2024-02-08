@@ -1,10 +1,80 @@
 ﻿@page
+@using DevDiaries.Web.Classes;
+@using DevDiaries.Web.Models.Blogs;
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container col-xxl-8 px-4 py-5">
+    <div class="row align-items-center g-5 py-5">
+        <div class="col-12 col-lg-6 col-md-6">
+            <h1 class="display-5 fw-bold lh-1 mb-3">
+                Dev Diary
+            </h1>
+            <p>
+                Dev Diaries is the home of coding blogs covering a vast range of topics of HTML,CSS, JS and many more.
+            </p>
+
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-6">
+            <img src="https://images.pexels.com/photos/360591/pexels-photo-360591.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" class="d-block mx-lg-auto img-fluid" width="400" />
+        </div>
+    </div>
 </div>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-6">
+            @if (Model.Blogs != null && Model.Blogs.Any())
+            {
+                int count = 1;
+                @foreach (var item in Model.Blogs)
+                {
+                    <div class="mb-5 bg-light box-shadow">
+                        <h2>
+                            @count .@item.Heading
+                        </h2>
+
+                        <img src="@item.FeaturedImageURL" class="mb-2 d-block img-fluid" />
+
+                        @if (item.Tags != null)
+                        {
+                            //@foreach (var tag in @DataUtility.ParseTagsForUI(item.Tags))
+                            @foreach (var tag in item.Tags)
+                            {
+                                <a href="/Tags/encodeTagName(@tag.Name)" class="p-1" style="text-decoration:none;">
+                                    <span class="badge btn btn-dark">@tag.Name</span>
+                                </a>
+                            }
+                        }
+
+                        <div class="pt-3 pb-3">
+                            <p>
+                                Author: @item.Author
+                                <br />
+                                Date Published: @item.PublishedDate.ToShortDateString()
+                                @*@Html.Raw(@item.Content)*@
+                            </p>
+                        </div>
+
+
+                        <p class="mb-2">@item.ShortDescription</p>
+                        <a href="/blogs/@item.UrlHandle" class="btn btn-dark">Read More</a>
+                    </div>
+
+                    count++;
+                }
+
+            }
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function encodeTagName(tagName) {
+        return encodeURIComponent(tagName);
+    }
+</script>

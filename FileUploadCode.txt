@@ -1,0 +1,34 @@
+﻿ //using (var httpClient = new HttpClient())
+            //using (var formData = new MultipartFormDataContent())
+            //using (var fileStream = FeaturedImage.OpenReadStream())
+            //{
+            //    string uploads = Path.Combine(_hostingEnvironment.WebRootPath, "uploads");
+
+            //    if (file.Length > 0)
+            //    {
+            //        string filePath = Path.Combine(uploads, file.FileName);
+            //        using (Stream fileStream = new FileStream(filePath, FileMode.Create))
+            //        {
+            //            await file.CopyToAsync(fileStream);
+            //        }
+            //    }
+
+            //    formData.Add(new StreamContent(fileStream), "FeaturedImage", FeaturedImage.FileName);
+
+            //    // Add other properties if needed
+            //    // formData.Add(new StringContent("value"), "otherProperty");
+
+            //    var response = await httpClient.PostAsync("http://localhost:5115/api/Image/UploadAsync", formData);
+
+            //    if (response.IsSuccessStatusCode)
+            //    {
+            //        // Handle the case where the file is successfully uploaded
+            //        return RedirectToPage("SuccessPage"); // Redirect to a success page
+            //    }
+            //    else
+            //    {
+            //        // Handle the case where the file upload fails
+            //        ModelState.AddModelError(string.Empty, "File upload failed");
+            //        return Page();
+            //    }
+            //}

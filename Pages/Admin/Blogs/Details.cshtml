@@ -1,0 +1,25 @@
+﻿@page "/blogs/{urlHandle}"
+@model DevDiaries.Web.Pages.Admin.Blogs.DetailsModel
+@{
+}
+
+<div class="container my-5">
+
+    <div class="row justify-content-center">
+        <h1 class="mb-3">
+            @Model.Blog.Heading
+        </h1>
+
+        <div class="d-flex justify-content-between mb-3">
+            <span>@Model.Blog.Author</span>
+            <span>@Model.Blog.PublishedDate.ToShortDateString()</span>
+        </div>
+
+        <img src="@Model.Blog.FeaturedImageURL" />
+
+        <div class="blog-details">
+            @Html.Raw(Model.Blog.Content)
+        </div>
+    </div>
+
+</div>

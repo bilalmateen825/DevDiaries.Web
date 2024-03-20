@@ -2,6 +2,7 @@ using DevDiaries.Web.Classes;
 using DevDiaries.Web.Data;
 using DevDiaries.Web.Data.Contracts;
 using DevDiaries.Web.Models.Blogs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Net.Http;
@@ -9,6 +10,7 @@ using System.Text.Json;
 
 namespace DevDiaries.Web.Pages.Admin.Blogs
 {
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public class EditModel : PageModel
     {
         private readonly IBlogRepository m_blogRepository;

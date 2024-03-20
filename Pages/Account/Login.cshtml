@@ -1,0 +1,40 @@
+﻿@page
+@model DevDiaries.Web.Pages.Account.LoginModel
+@{
+}
+
+<div class="container">
+    <form method="post">
+
+        <div class="row">
+            <h1>Login</h1>
+            <partial name="_Notification" />
+        </div>
+               
+        <div class="row mb-4">
+            <div class="col-1">
+                <label class="form-label" for="Email">Email </label>
+            </div>
+            <div class="col-3">
+                <input class="form-control" asp-for="@Model.LoginViewModel.Email" id="Email" required />
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-1">
+                <label class="form-label" for="Password">Password </label>
+            </div>
+
+            <div class="col-3">
+                <input class="form-control" type="password" asp-for="@Model.LoginViewModel.Password" id="Password" required />
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-1">
+                <input class="form-control" type="submit" value="Login" width="100" />
+            </div>
+        </div>
+
+    </form>
+</div>

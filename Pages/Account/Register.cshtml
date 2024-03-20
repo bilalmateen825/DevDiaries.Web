@@ -1,0 +1,59 @@
+﻿@page
+@model RegisterModel
+@{
+}
+<div class="container">
+    <form method="post">
+
+        <div class="row mb-4">
+            <h1>Register</h1>
+            <partial name="_Notification" />
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-1">
+                <label class="form-label" for="FirstName">First Name </label>
+            </div>
+            <div class="col-3">
+                <input class="form-control" asp-for="@Model.RegisterViewModel.FirstName" id="FirstName" required />
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-1">
+                <label class="form-label" for="LastName">Last Name </label>
+            </div>
+
+            <div class="col-3">
+                <input class="form-control" asp-for="@Model.RegisterViewModel.LastName" id="LastName" required />
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-1">
+                <label class="form-label" for="Email">Email </label>
+            </div>
+            <div class="col-3">
+                <input class="form-control" asp-for="@Model.RegisterViewModel.Email" id="Email" required />
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-1">
+                <label class="form-label" for="Password">Password </label>
+            </div>
+
+            <div class="col-3">
+                <input class="form-control" type="password" asp-for="@Model.RegisterViewModel.Password" id="Password" required />
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-1">
+                <input class="form-control" type="submit" value="Register" width="100" />
+            </div>
+        </div>
+
+    </form>
+</div>
+

@@ -2,12 +2,14 @@ using DevDiaries.Web.Classes;
 using DevDiaries.Web.Data;
 using DevDiaries.Web.Data.Contracts;
 using DevDiaries.Web.Models.Blogs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Text.Json;
 
 namespace DevDiaries.Web.Pages.Admin.Blogs
 {
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public class BlogsModel : PageModel
     {
         private readonly BlogsDBContext m_dbContext;

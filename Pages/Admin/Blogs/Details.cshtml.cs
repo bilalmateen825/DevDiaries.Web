@@ -1,8 +1,10 @@
 using DevDiaries.Web.Data.Contracts;
 using DevDiaries.Web.Models.Blogs;
+using DevDiaries.Web.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Runtime.InteropServices;
 
 namespace DevDiaries.Web.Pages.Admin.Blogs
 {
@@ -10,6 +12,7 @@ namespace DevDiaries.Web.Pages.Admin.Blogs
     {
         private readonly IBlogRepository blogRepository;
         private readonly IBlogPostLikeRepository blogPostLikeRepository;
+        private readonly IBlogPostCommentRepository blogPostCommentRepository;
         private readonly SignInManager<IdentityUser> signInManager;
         private readonly UserManager<IdentityUser> userManager;
 
@@ -18,32 +21,83 @@ namespace DevDiaries.Web.Pages.Admin.Blogs
 
         public bool Liked { get; set; }
 
-        public DetailsModel(IBlogRepository blogRepository, IBlogPostLikeRepository blogPostLikeRepository, SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
+        [BindProperty]
+        public Guid BlogPostId { get; set; }
+
+        [BindProperty]
+        public string CommentDescription { get; set; }
+
+        public IEnumerable<BlogComment> Comments { get; set; }
+
+        public DetailsModel(IBlogRepository blogRepository, IBlogPostLikeRepository blogPostLikeRepository, IBlogPostCommentRepository blogPostCommentRepository, SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
         {
             this.blogRepository = blogRepository;
             this.blogPostLikeRepository = blogPostLikeRepository;
             this.signInManager = signInManager;
             this.userManager = userManager;
+            this.blogPostCommentRepository = blogPostCommentRepository;
         }
 
         public async Task<IActionResult> OnGet(string urlHandle)
         {
             Blog = await blogRepository.GetBlogAsync(urlHandle);
 
-            if(Blog!= null)
+            if (Blog != null)
             {
-                if(signInManager.IsSignedIn(User))
+                BlogPostId = Blog.Id;
+
+                if (signInManager.IsSignedIn(User))
                 {
                     var likes = await blogPostLikeRepository.GetLikesForBlog(Blog.Id);
 
                     var user = userManager.GetUserId(User);
 
                     Liked = likes.Any(x => x.UserId == Guid.Parse(user));
+
+                    await GetComments();
                 }
             }
 
             Likes = await blogPostLikeRepository.GetTotalLikesForBlog(Blog.Id);
             return Page();
+        }
+
+        private async Task GetComments()
+        {
+            var blogComments = await blogPostCommentRepository.GetAllAsync(Blog.Id);
+            var blogCommentsViewModel = new List<BlogComment>();
+
+            foreach (var comment in blogComments)
+            {
+                blogCommentsViewModel.Add(new BlogComment()
+                {
+                    Description = comment.Description,
+                    DateAdded = comment.DateAdded,
+                    Username = (await userManager.FindByIdAsync(comment.UserId.ToString())).UserName,
+                });
+            }
+
+            Comments = blogCommentsViewModel;
+        }
+
+        public async Task<IActionResult> OnPost(string urlHandle)
+        {
+            if (signInManager.IsSignedIn(User) && !string.IsNullOrWhiteSpace(CommentDescription))
+            {
+                var userId = userManager.GetUserId(User);
+
+                var comment = new BlogPostComment()
+                {
+                    BlogPostId = BlogPostId,
+                    Description = CommentDescription,
+                    DateAdded = DateTime.Now,
+                    UserId = Guid.Parse(userId),
+                };
+
+                await blogPostCommentRepository.AddAsync(comment);
+            }
+
+            return RedirectToPage("Details", new { urlHandle = urlHandle });
         }
     }
 }

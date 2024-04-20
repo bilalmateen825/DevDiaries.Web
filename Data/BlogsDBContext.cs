@@ -12,6 +12,7 @@ namespace DevDiaries.Web.Data
         public DbSet<Blog> Blogs { get; set; }
         public DbSet<BlogPostLike> BlogPostLike { get; set; }
         public DbSet<Tag> Tag { get; set; }
+        public DbSet<BlogPostComment> BlogPostComment { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

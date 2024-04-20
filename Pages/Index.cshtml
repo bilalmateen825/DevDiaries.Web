@@ -44,9 +44,9 @@
                             //@foreach (var tag in @DataUtility.ParseTagsForUI(item.Tags))
                             @foreach (var tag in item.Tags)
                             {
-                                <a href="/Tags/encodeTagName(@tag.Name)" class="p-1" style="text-decoration:none;">
+                                <a href="/Tags/@tag.Name" class="p-1" style="text-decoration:none;">
                                     <span class="badge btn btn-dark">@tag.Name</span>
-                                </a>
+                                </a>                             
                             }
                         }
 
@@ -74,8 +74,25 @@
 </div>
 
 <script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+        
+        var tagLinks = document.querySelectorAll(".tag-link");
+        tagLinks.forEach(function (tagLink) {
+            tagLink.addEventListener("click", function (event) {
+                event.preventDefault();                
+                var tagName = this.getAttribute("data-tag");
+                navigateToTag(tagName);
+            });
+        });
+
+        function navigateToTag(tagName) {
+            console.log(tagName);
+            window.location.href = '/Tags/' + tagName;
+        }
+    });
+
     function encodeTagName(tagName) {
-           ;
         console.log(encodeURIComponent(tagName));
         return encodeURIComponent(tagName);
     }

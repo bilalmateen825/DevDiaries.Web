@@ -4,6 +4,7 @@ using DevDiaries.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DevDiaries.Web.Migrations
 {
     [DbContext(typeof(BlogsDBContext))]
-    partial class BlogsDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240418180347_Adding Functionality for comments")]
+    partial class AddingFunctionalityforcomments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -21,6 +21,7 @@
             <tr>
                 <th>Username</th>
                 <th>Email</th>
+                <th></th>
             </tr>
         </thead>
 
@@ -30,11 +31,20 @@
                 <tr>
                     <td>@user.Username</td>
                     <td>@user.Email</td>
+                    <td>
+                        <a class="btn btn-danger user-delete-btn" data-id="@user.Id" data-Username="@user.Username">
+                            Delete
+                        </a>
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
+
+<form method="post" asp-page-handler="delete" id="deleteUserForm">
+    <input type="hidden" asp-for="SelectedUserId" id="selectedUserId" />
+</form>
 
 <form method="post">
     <!-- Button trigger modal -->
@@ -87,3 +97,25 @@
         </div>
     </div>
 </form>
+
+
+@section Scripts{
+    <script>
+        const userDeleteElements = document.querySelectorAll('.user-delete-btn');
+        const deleteUserForm = document.getElementById('deleteUserForm');
+        const selectedUserId = document.getElementById('selectedUserId');
+
+        userDeleteElements.forEach((element) => {
+            debugger;
+            element.addEventListener('click', function () {
+
+                const userId = element.dataset.id;
+                const username = element.dataset.Username;
+
+                selectedUserId.value = userId;
+                deleteUserForm.submit();
+            });
+        });
+
+    </script>
+}

@@ -30,9 +30,14 @@ namespace DevDiaries.Web.Data
             return false;
         }
 
-        public Task<bool> DeleteAsync(int id)
+        public async Task DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var user = await userManager.FindByIdAsync(id.ToString());
+
+            if (user != null)
+            {
+                await userManager.DeleteAsync(user);
+            }
         }
 
         public async Task<IEnumerable<IdentityUser>> GetAllAsync()

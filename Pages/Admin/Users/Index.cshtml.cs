@@ -1,12 +1,14 @@
 using DevDiaries.Web.Data.Contracts;
 using DevDiaries.Web.Models.Users;
 using DevDiaries.Web.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace DevDiaries.Web.Pages.Users
 {
+    [Authorize(Roles = "SuperAdmin")]
     public class IndexModel : PageModel
     {
         private readonly IUserRepository userRepository;
@@ -15,6 +17,9 @@ namespace DevDiaries.Web.Pages.Users
 
         [BindProperty]
         public AddUser AddUserRequest { get; set; }
+
+        [BindProperty]
+        public Guid SelectedUserId { get; set; }
 
         public IndexModel(IUserRepository userRepository)
         {
@@ -31,6 +36,7 @@ namespace DevDiaries.Web.Pages.Users
             {
                 Users.Add(new Models.Users.User()
                 {
+                    Id = Guid.Parse(user.Id),
                     Email = user.Email,
                     Username = user.UserName,
                 });
@@ -61,6 +67,12 @@ namespace DevDiaries.Web.Pages.Users
                 return RedirectToPage("/Admin/Users/Index");
 
             return Page();
+        }
+
+        public async Task<IActionResult> OnPostDelete()
+        {
+            await userRepository.DeleteAsync(SelectedUserId);
+            return RedirectToPage("/Admin/Users/Index");
         }
     }
 }

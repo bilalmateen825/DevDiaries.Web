@@ -62,16 +62,19 @@
                     <div class="mb-3">
                         <label class="form-label">Username</label>
                         <input type="text" asp-for="AddUserRequest.Username" class="form-control" />
+                        <span class="text-danger" asp-validation-for="AddUserRequest.Username" />
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Email</label>
                         <input type="email" asp-for="AddUserRequest.Email" class="form-control" />
+                        <span class="text-danger" asp-validation-for="AddUserRequest.Email" />
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Password</label>
                         <input type="password" asp-for="AddUserRequest.Password" class="form-control" />
+                        <span class="text-danger" asp-validation-for="AddUserRequest.Password" />
                     </div>
 
                     <div class="mb-3">

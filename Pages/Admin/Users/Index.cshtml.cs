@@ -47,24 +47,27 @@ namespace DevDiaries.Web.Pages.Users
 
         public async Task<IActionResult> OnPost()
         {
-            IdentityUser identityUser = new IdentityUser
+            if (ModelState.IsValid)
             {
-                Email = AddUserRequest.Email,
-                UserName = AddUserRequest.Username,
-            };
+                IdentityUser identityUser = new IdentityUser
+                {
+                    Email = AddUserRequest.Email,
+                    UserName = AddUserRequest.Username,
+                };
 
-            List<string> lstRoles = new List<string>()
-            {
-                "User"
-            };
+                List<string> lstRoles = new List<string>()
+                {
+                    "User"
+                };
 
-            if (AddUserRequest.AdminCheckbox)
-                lstRoles.Add("Admin");
+                if (AddUserRequest.AdminCheckbox)
+                    lstRoles.Add("Admin");
 
-            var result = await userRepository.AddAsync(identityUser, AddUserRequest.Password, lstRoles);
+                var result = await userRepository.AddAsync(identityUser, AddUserRequest.Password, lstRoles);
 
-            if (result)
-                return RedirectToPage("/Admin/Users/Index");
+                if (result)
+                    return RedirectToPage("/Admin/Users/Index");
+            }
 
             return Page();
         }

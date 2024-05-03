@@ -16,23 +16,28 @@
             <div class="mb-3">
                 <label for="Id" class="form-label">Id</label>
                 <input type="text" class="form-control" id="id" placeholder="Header" asp-for="@Model.BlogPost.Id" readonly>
+                <span class="text-danger" asp-validation-for="@Model.BlogPost.Id" />
             </div>
 
             <div class="mb-3">
                 <label for="HeadingId" class="form-label">Heading</label>
-                <input type="text" class="form-control" id="HeadingId" placeholder="Header" asp-for="@Model.BlogPost.Heading">
+                <input type="text" class="form-control" id="HeadingId" required placeholder="Header" asp-for="@Model.BlogPost.Heading">
+                <span class="text-danger" asp-validation-for="@Model.BlogPost.Heading" />
             </div>
             <div class="mb-3">
                 <label for="PageTitleId" class="form-label">Page Title</label>
-                <input type="text" class="form-control" id="PageTitleId" placeholder="Page Title" asp-for="@Model.BlogPost.PageTitle" />
+                <input type="text" class="form-control" id="PageTitleId" required placeholder="Page Title" asp-for="@Model.BlogPost.PageTitle" />
+                <span class="text-danger" asp-validation-for="@Model.BlogPost.PageTitle" />
             </div>
             <div class="mb-3">
                 <label for="ContentId" class="form-label">Content</label>
-                <textarea class="form-control" id="ContentId" rows="3" asp-for="@Model.BlogPost.Content"></textarea>
+                <textarea class="form-control" id="ContentId" rows="3" required asp-for="@Model.BlogPost.Content"></textarea>
+                <span class="text-danger" asp-validation-for="@Model.BlogPost.Content" />
             </div>
             <div class="mb-3">
                 <label for="ShortDescriptionId" class="form-label">Short Description</label>
-                <textarea class="form-control" id="ShortDescriptionId" rows="3" asp-for="@Model.BlogPost.ShortDescription"></textarea>
+                <textarea class="form-control" id="ShortDescriptionId" rows="3" required asp-for="@Model.BlogPost.ShortDescription"></textarea>
+                <span class="text-danger" asp-validation-for="@Model.BlogPost.ShortDescription" />
             </div>
             <div class="mb-3">
                 @*<label for="FeaturedImageURL" class="form-label">URL</label>
@@ -40,7 +45,7 @@
 
                 <div class="mb-3">
                     <label for="FeaturedImageURL" class="form-label">Image</label>
-                    <input type="file" class="form-control" id="FeaturedImage" placeholder="Image" asp-for="@Model.FeaturedImage" />
+                    <input type="file" class="form-control" id="FeaturedImage" required placeholder="Image" asp-for="@Model.FeaturedImage" />
 
                     <input type="text" class="form-control" id="FeaturedImageURL" placeholder="Image" asp-for="@Model.BlogPost.FeaturedImageURL" hidden />
                     @*<input type="text" class="form-control" id="FeaturedImageURL" placeholder="URL" asp-for="@Model.BlogPost.FeaturedImageURL" hidden />*@
@@ -62,20 +67,24 @@
             </div>
             <div class="mb-3">
                 <label for="URLHandleId" class="form-label">URL Handle</label>
-                <input type="text" class="form-control" id="URLHandleId" placeholder="URL Handle" asp-for="@Model.BlogPost.UrlHandle" />
+                <input type="text" class="form-control" id="URLHandleId" placeholder="URL Handle" required asp-for="@Model.BlogPost.UrlHandle" />
+                <span class="text-danger" asp-validation-for="@Model.BlogPost.UrlHandle" />
             </div>
             <div class="mb-3">
                 <label for="PublishedDateId" class="form-label">Published Date</label>
-                <input type="date" class="form-control" id="PublishedDateId" placeholder="Published Date" asp-for="@Model.BlogPost.PublishedDate" />
+                <input type="date" class="form-control" id="PublishedDateId" placeholder="Published Date" required asp-for="@Model.BlogPost.PublishedDate" />
+                <span class="text-danger" asp-validation-for="@Model.BlogPost.PublishedDate" />
             </div>
             <div class="mb-3">
                 <label for="AuthorId" class="form-label">Author</label>
-                <input type="text" class="form-control" id="AuthorId" placeholder="Author" asp-for="@Model.BlogPost.Author" />
+                <input type="text" class="form-control" id="AuthorId" placeholder="Author" required asp-for="@Model.BlogPost.Author" />
+                <span class="text-danger" asp-validation-for="@Model.BlogPost.Author" />
             </div>
 
             <div class="mb-3">
                 <label for="Tags" class="form-label">Tags</label>
                 <input type="text" class="form-control" id="Tags" placeholder="Tags" asp-for="@Model.Tags" />
+                <span class="text-danger" asp-validation-for="@Model.Tags" />
             </div>
 
             <div class="form-check">

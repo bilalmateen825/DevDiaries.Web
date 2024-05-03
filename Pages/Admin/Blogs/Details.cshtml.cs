@@ -4,6 +4,7 @@ using DevDiaries.Web.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.InteropServices;
 
 namespace DevDiaries.Web.Pages.Admin.Blogs
@@ -25,6 +26,9 @@ namespace DevDiaries.Web.Pages.Admin.Blogs
         public Guid BlogPostId { get; set; }
 
         [BindProperty]
+        [Required]
+        [MaxLength(500)]
+        [MinLength(5)]
         public string CommentDescription { get; set; }
 
         public IEnumerable<BlogComment> Comments { get; set; }
@@ -39,6 +43,36 @@ namespace DevDiaries.Web.Pages.Admin.Blogs
         }
 
         public async Task<IActionResult> OnGet(string urlHandle)
+        {
+            await GetBlog(urlHandle);
+            return Page();
+        }
+
+        private async Task GetComments()
+        {
+            var blogComments = await blogPostCommentRepository.GetAllAsync(Blog.Id);
+            var blogCommentsViewModel = new List<BlogComment>();
+
+
+            foreach (var comment in blogComments)
+            {
+                IdentityUser identityUser = (await userManager.FindByIdAsync(comment.UserId.ToString()));
+
+                if (identityUser == null)
+                    continue;
+
+                blogCommentsViewModel.Add(new BlogComment()
+                {
+                    Description = comment.Description,
+                    DateAdded = comment.DateAdded,
+                    Username = identityUser.UserName,
+                });
+            }
+
+            Comments = blogCommentsViewModel;
+        }
+
+        private async Task GetBlog(string urlHandle)
         {
             Blog = await blogRepository.GetBlogAsync(urlHandle);
 
@@ -59,45 +93,32 @@ namespace DevDiaries.Web.Pages.Admin.Blogs
             }
 
             Likes = await blogPostLikeRepository.GetTotalLikesForBlog(Blog.Id);
-            return Page();
-        }
-
-        private async Task GetComments()
-        {
-            var blogComments = await blogPostCommentRepository.GetAllAsync(Blog.Id);
-            var blogCommentsViewModel = new List<BlogComment>();
-
-            foreach (var comment in blogComments)
-            {
-                blogCommentsViewModel.Add(new BlogComment()
-                {
-                    Description = comment.Description,
-                    DateAdded = comment.DateAdded,
-                    Username = (await userManager.FindByIdAsync(comment.UserId.ToString())).UserName,
-                });
-            }
-
-            Comments = blogCommentsViewModel;
         }
 
         public async Task<IActionResult> OnPost(string urlHandle)
         {
-            if (signInManager.IsSignedIn(User) && !string.IsNullOrWhiteSpace(CommentDescription))
+            if (ModelState.IsValid)
             {
-                var userId = userManager.GetUserId(User);
-
-                var comment = new BlogPostComment()
+                if (signInManager.IsSignedIn(User) && !string.IsNullOrWhiteSpace(CommentDescription))
                 {
-                    BlogPostId = BlogPostId,
-                    Description = CommentDescription,
-                    DateAdded = DateTime.Now,
-                    UserId = Guid.Parse(userId),
-                };
+                    var userId = userManager.GetUserId(User);
 
-                await blogPostCommentRepository.AddAsync(comment);
+                    var comment = new BlogPostComment()
+                    {
+                        BlogPostId = BlogPostId,
+                        Description = CommentDescription,
+                        DateAdded = DateTime.Now,
+                        UserId = Guid.Parse(userId),
+                    };
+
+                    await blogPostCommentRepository.AddAsync(comment);
+                }
+
+                return RedirectToPage("Details", new { urlHandle = urlHandle });
             }
 
-            return RedirectToPage("Details", new { urlHandle = urlHandle });
+            await GetBlog(urlHandle);
+            return Page();
         }
     }
 }

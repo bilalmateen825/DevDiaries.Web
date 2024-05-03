@@ -2,9 +2,11 @@ using DevDiaries.Web.Classes;
 using DevDiaries.Web.Data;
 using DevDiaries.Web.Data.Contracts;
 using DevDiaries.Web.Models.Blogs;
+using DevDiaries.Web.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.ComponentModel.DataAnnotations;
 using System.Net.Http;
 using System.Text.Json;
 
@@ -26,9 +28,10 @@ namespace DevDiaries.Web.Pages.Admin.Blogs
         }
 
         [BindProperty]
-        public Blog BlogPost { get; set; }
+        public EditBlogPostRequest BlogPost { get; set; }
 
         [BindProperty]
+        [Required]
         public string Tags { get; set; }
 
         public EditModel(IBlogRepository blogRepository, IWebHostEnvironment webHostEnvironment, IImageRepository imageRepository, IHttpClientFactory httpClientFactory)
@@ -41,14 +44,27 @@ namespace DevDiaries.Web.Pages.Admin.Blogs
 
         public async Task OnGet(Guid id)
         {
-            var blog = await m_blogRepository.GetBlogAsync(id);
+            var blogDomainModel = await m_blogRepository.GetBlogAsync(id);
 
-            if (blog == null)
+            if (blogDomainModel == null)
                 return;
 
-            Tags = DataUtility.GetConcatenatedTags(blog.Tags);
+            if (blogDomainModel.Tags != null)
+                Tags = DataUtility.GetConcatenatedTags(blogDomainModel.Tags);
 
-            BlogPost = blog;
+            BlogPost = new EditBlogPostRequest()
+            {
+                Id = blogDomainModel.Id,
+                Author = blogDomainModel.Author,
+                Content = blogDomainModel.Content,
+                FeaturedImageURL = blogDomainModel.FeaturedImageURL,
+                Heading = blogDomainModel.Heading,
+                PageTitle = blogDomainModel.PageTitle,
+                UrlHandle = blogDomainModel.UrlHandle,
+                PublishedDate = blogDomainModel.PublishedDate,
+                ShortDescription = blogDomainModel.ShortDescription,
+                Visible = blogDomainModel.Visible,
+            };
 
             //SetFeaturedImageFromUrl(BlogPost.FeaturedImageURL);
         }
@@ -58,26 +74,59 @@ namespace DevDiaries.Web.Pages.Admin.Blogs
             //string uploadPath = Path.Combine(m_webHostEnvironment.WebRootPath, "uploads");
 
             //string uploadedFileURL = await Utility.UploadImage(uploadPath, FeaturedImage);
-            string uploadedFileURL = await m_imageRepository.UploadAsync(FeaturedImage);
 
-            BlogPost.Tags = DataUtility.ParseTags(Tags);
-
-            if (!string.IsNullOrEmpty(uploadedFileURL))
-                BlogPost.FeaturedImageURL = uploadedFileURL;
-
-            BlogPost.Tags = DataUtility.ParseTags(Tags);
-
-            await m_blogRepository.UpdateBlogAsync(BlogPost);
-
-            Notification notification = new Notification()
+            if (ModelState.IsValid)
             {
-                Message = "Blog updated successfully.",
-                Type = Classes.Enums.ENNotificationType.Success
-            };
+                try
+                {
+                    Blog blogDomainModel = new Blog()
+                    {
+                        Id = BlogPost.Id,
+                        Author = BlogPost.Author,
+                        Content = BlogPost.Content,
+                        FeaturedImageURL = BlogPost.FeaturedImageURL,
+                        Heading = BlogPost.Heading,
+                        PageTitle = BlogPost.PageTitle,
+                        UrlHandle = BlogPost.UrlHandle,
+                        PublishedDate = BlogPost.PublishedDate,
+                        ShortDescription = BlogPost.ShortDescription,
+                        Visible = BlogPost.Visible
+                    };
 
-            TempData[Constants.Notification] = JsonSerializer.Serialize<Notification>(notification);
+                    string uploadedFileURL = await m_imageRepository.UploadAsync(FeaturedImage);
 
-            return RedirectToPage("/Admin/Blogs/Blogs");
+                    blogDomainModel.Tags = DataUtility.ParseTags(Tags);
+
+                    if (!string.IsNullOrEmpty(uploadedFileURL))
+                        blogDomainModel.FeaturedImageURL = uploadedFileURL;
+
+                    blogDomainModel.Tags = DataUtility.ParseTags(Tags);
+
+                    await m_blogRepository.UpdateBlogAsync(blogDomainModel);
+
+                    Notification notification = new Notification()
+                    {
+                        Message = "Blog updated successfully.",
+                        Type = Classes.Enums.ENNotificationType.Success
+                    };
+
+                    TempData[Constants.Notification] = JsonSerializer.Serialize<Notification>(notification);
+
+                    return RedirectToPage("/Admin/Blogs/Blogs");
+                }
+                catch (Exception ex)
+                {
+                    ViewData["Notification"] = new Notification
+                    {
+                        Type = Classes.Enums.ENNotificationType.Error,
+                        Message = "Something went wrong!",
+                    };
+                }
+
+                return Page();
+            }
+
+            return Page();
         }
 
         public async Task<IActionResult> OnPostDeleteAsync()
@@ -116,6 +165,19 @@ namespace DevDiaries.Web.Pages.Admin.Blogs
                 else
                 {
                     // Handle error if necessary
+                }
+            }
+        }
+
+        private void ValidateEditBlogPost()
+        {
+            if(!string.IsNullOrWhiteSpace(BlogPost.Heading))
+            {
+                //checking for max length
+                if(BlogPost.Heading.Length > 500)
+                {
+                    //BlogPost.Heading is key
+                    ModelState.AddModelError("BlogPost.Heading", "Heading can not be greater than 500 characters");
                 }
             }
         }

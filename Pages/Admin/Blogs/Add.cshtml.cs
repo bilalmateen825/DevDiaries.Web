@@ -2,10 +2,12 @@ using DevDiaries.Web.Classes;
 using DevDiaries.Web.Data;
 using DevDiaries.Web.Data.Contracts;
 using DevDiaries.Web.Models.Blogs;
+using DevDiaries.Web.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.SqlServer.Server;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Text.Json;
 
@@ -19,12 +21,13 @@ namespace DevDiaries.Web.Pages.Admin.Blogs
         private readonly IBlogRepository blogRepository;
 
         [BindProperty]
-        public Blog BlogPost { get; set; }
+        public AddBlogPostRequest BlogPost { get; set; }
 
         [BindProperty]
         public IFormFile FeaturedImage { get; set; }
 
         [BindProperty]
+        [Required]
         public string Tags { get; set; }
 
         public AddModel(IBlogRepository blogRepository, IWebHostEnvironment webHostEnvironment)
@@ -47,31 +50,47 @@ namespace DevDiaries.Web.Pages.Admin.Blogs
             if (string.IsNullOrEmpty(uploadedFileURL))
                 return Page();
 
-            Blog blog = new Blog()
+            ValidateBlogPost();
+
+            if (ModelState.IsValid)
             {
-                Author = BlogPost.Author,
-                Content = BlogPost.Content,
-                FeaturedImageURL = uploadedFileURL,// BlogPost.FeaturedImageURL,
-                Heading = BlogPost.Heading,
-                PageTitle = BlogPost.PageTitle,
-                PublishedDate = BlogPost.PublishedDate,
-                ShortDescription = BlogPost.ShortDescription,
-                UrlHandle = BlogPost.UrlHandle,
-                Visible = BlogPost.Visible,
-                Tags = DataUtility.ParseTags(Tags),
-            };
+                Blog blog = new Blog()
+                {
+                    Author = BlogPost.Author,
+                    Content = BlogPost.Content,
+                    FeaturedImageURL = uploadedFileURL,// BlogPost.FeaturedImageURL,
+                    Heading = BlogPost.Heading,
+                    PageTitle = BlogPost.PageTitle,
+                    PublishedDate = BlogPost.PublishedDate,
+                    ShortDescription = BlogPost.ShortDescription,
+                    UrlHandle = BlogPost.UrlHandle,
+                    Visible = BlogPost.IsVisible,
+                    Tags = DataUtility.ParseTags(Tags),
+                };
 
-            await blogRepository.AddBlogAsync(blog);
+                await blogRepository.AddBlogAsync(blog);
 
-            Notification notification = new Notification()
+                Notification notification = new Notification()
+                {
+                    Message = "Blog added successfully.",
+                    Type = Classes.Enums.ENNotificationType.Success
+                };
+
+                TempData[Constants.Notification] = JsonSerializer.Serialize<Notification>(notification);
+
+                return RedirectToPage("/Admin/Blogs/Blogs");
+            }
+
+            return Page();
+        }
+
+        private void ValidateBlogPost()
+        {
+            if(BlogPost.PublishedDate.Date < DateTime.Now.Date)
             {
-                Message = "Blog added successfully.",
-                Type = Classes.Enums.ENNotificationType.Success
-            };
-
-            TempData[Constants.Notification] = JsonSerializer.Serialize<Notification>(notification);
-
-            return RedirectToPage("/Admin/Blogs/Blogs");
+                ModelState.AddModelError("BlogPost.PublishedDate",
+                    $"{nameof(BlogPost.PublishedDate)} can only be today's date or future date");
+            }
         }
 
         public IActionResult OnUpload(IFormFile formFile)
